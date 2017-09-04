@@ -1,0 +1,356 @@
+<html><!-- Created using the cpp_pretty_printer from the dlib C++ library.  See http://dlib.net for updates. --><head><title>dlib C++ Library - loss.h</title></head><body bgcolor='white'><pre>
+<font color='#009900'>// Copyright (C) 2015  Davis E. King (davis@dlib.net)
+</font><font color='#009900'>// License: Boost Software License   See LICENSE.txt for the full license.
+</font><font color='#0000FF'>#ifndef</font> DLIB_DNn_LOSS_H_
+<font color='#0000FF'>#define</font> DLIB_DNn_LOSS_H_
+
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='loss_abstract.h.html'>loss_abstract.h</a>"
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='core.h.html'>core.h</a>"
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='../matrix.h.html'>../matrix.h</a>"
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='tensor_tools.h.html'>tensor_tools.h</a>"
+
+<font color='#0000FF'>namespace</font> dlib
+<b>{</b>
+
+<font color='#009900'>// ----------------------------------------------------------------------------------------
+</font>
+    <font color='#0000FF'>class</font> <b><a name='loss_binary_hinge_'></a>loss_binary_hinge_</b> 
+    <b>{</b>
+    <font color='#0000FF'>public</font>:
+
+        <font color='#0000FF'>const</font> <font color='#0000FF'>static</font> <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>int</u></font> sample_expansion_factor <font color='#5555FF'>=</font> <font color='#979000'>1</font>;
+        <font color='#0000FF'>typedef</font> <font color='#0000FF'><u>float</u></font> label_type;
+
+        <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font>
+            <font color='#0000FF'>typename</font> SUB_TYPE,
+            <font color='#0000FF'>typename</font> label_iterator
+            <font color='#5555FF'>&gt;</font>
+        <font color='#0000FF'><u>void</u></font> <b><a name='to_label'></a>to_label</b> <font face='Lucida Console'>(</font>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> input_tensor,
+            <font color='#0000FF'>const</font> SUB_TYPE<font color='#5555FF'>&amp;</font> sub,
+            label_iterator iter
+        <font face='Lucida Console'>)</font> <font color='#0000FF'>const</font>
+        <b>{</b>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> output_tensor <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_output</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>output_tensor.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+
+            <font color='#0000FF'>const</font> <font color='#0000FF'><u>float</u></font><font color='#5555FF'>*</font> out_data <font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>host</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> i <font color='#5555FF'>=</font> <font color='#979000'>0</font>; i <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>i<font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#5555FF'>*</font>iter<font color='#5555FF'>+</font><font color='#5555FF'>+</font> <font color='#5555FF'>=</font> out_data[i];
+            <b>}</b>
+        <b>}</b>
+
+        <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font>
+            <font color='#0000FF'>typename</font> const_label_iterator,
+            <font color='#0000FF'>typename</font> SUBNET
+            <font color='#5555FF'>&gt;</font>
+        <font color='#0000FF'><u>double</u></font> <b><a name='compute_loss_value_and_gradient'></a>compute_loss_value_and_gradient</b> <font face='Lucida Console'>(</font>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> input_tensor,
+            const_label_iterator truth, 
+            SUBNET<font color='#5555FF'>&amp;</font> sub
+        <font face='Lucida Console'>)</font> <font color='#0000FF'>const</font>
+        <b>{</b>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> output_tensor <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_output</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            tensor<font color='#5555FF'>&amp;</font> grad <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_gradient_input</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>!</font><font color='#5555FF'>=</font> <font color='#979000'>0</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font color='#5555FF'>%</font>sample_expansion_factor <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>0</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> grad.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>output_tensor.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+
+            <font color='#009900'>// The loss we output is the average loss over the mini-batch.
+</font>            <font color='#0000FF'>const</font> <font color='#0000FF'><u>double</u></font> scale <font color='#5555FF'>=</font> <font color='#979000'>1.0</font><font color='#5555FF'>/</font>output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'><u>double</u></font> loss <font color='#5555FF'>=</font> <font color='#979000'>0</font>;
+            <font color='#0000FF'>const</font> <font color='#0000FF'><u>float</u></font><font color='#5555FF'>*</font> out_data <font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>host</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'><u>float</u></font><font color='#5555FF'>*</font> g <font color='#5555FF'>=</font> grad.<font color='#BB00BB'>host_write_only</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> i <font color='#5555FF'>=</font> <font color='#979000'>0</font>; i <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>i<font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#0000FF'>const</font> <font color='#0000FF'><u>float</u></font> y <font color='#5555FF'>=</font> <font color='#5555FF'>*</font>truth<font color='#5555FF'>+</font><font color='#5555FF'>+</font>;
+                <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>y <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#5555FF'>+</font><font color='#979000'>1</font> <font color='#5555FF'>|</font><font color='#5555FF'>|</font> y <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#5555FF'>-</font><font color='#979000'>1</font>, "<font color='#CC0000'>y: </font>" <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> y<font face='Lucida Console'>)</font>;
+                <font color='#0000FF'>const</font> <font color='#0000FF'><u>float</u></font> temp <font color='#5555FF'>=</font> <font color='#979000'>1</font><font color='#5555FF'>-</font>y<font color='#5555FF'>*</font>out_data[i];
+                <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>temp <font color='#5555FF'>&gt;</font> <font color='#979000'>0</font><font face='Lucida Console'>)</font>
+                <b>{</b>
+                    loss <font color='#5555FF'>+</font><font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font>temp;
+                    g[i] <font color='#5555FF'>=</font> <font color='#5555FF'>-</font>scale<font color='#5555FF'>*</font>y;
+                <b>}</b>
+                <font color='#0000FF'>else</font>
+                <b>{</b>
+                    g[i] <font color='#5555FF'>=</font> <font color='#979000'>0</font>;
+                <b>}</b>
+            <b>}</b>
+            <font color='#0000FF'>return</font> loss;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='serialize'></a>serialize</b><font face='Lucida Console'>(</font><font color='#0000FF'>const</font> loss_binary_hinge_<font color='#5555FF'>&amp;</font> , std::ostream<font color='#5555FF'>&amp;</font> out<font face='Lucida Console'>)</font>
+        <b>{</b>
+            <font color='#BB00BB'>serialize</font><font face='Lucida Console'>(</font>"<font color='#CC0000'>loss_binary_hinge_</font>", out<font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='deserialize'></a>deserialize</b><font face='Lucida Console'>(</font>loss_binary_hinge_<font color='#5555FF'>&amp;</font> , std::istream<font color='#5555FF'>&amp;</font> in<font face='Lucida Console'>)</font>
+        <b>{</b>
+            std::string version;
+            <font color='#BB00BB'>deserialize</font><font face='Lucida Console'>(</font>version, in<font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>version <font color='#5555FF'>!</font><font color='#5555FF'>=</font> "<font color='#CC0000'>loss_binary_hinge_</font>"<font face='Lucida Console'>)</font>
+                <font color='#0000FF'>throw</font> <font color='#BB00BB'>serialization_error</font><font face='Lucida Console'>(</font>"<font color='#CC0000'>Unexpected version found while deserializing dlib::loss_binary_hinge_.</font>"<font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> std::ostream<font color='#5555FF'>&amp;</font> <b><a name='operator'></a>operator</b><font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font><font face='Lucida Console'>(</font>std::ostream<font color='#5555FF'>&amp;</font> out, <font color='#0000FF'>const</font> loss_binary_hinge_<font color='#5555FF'>&amp;</font> <font face='Lucida Console'>)</font>
+        <b>{</b>
+            out <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>loss_binary_hinge</font>";
+            <font color='#0000FF'>return</font> out;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='to_xml'></a>to_xml</b><font face='Lucida Console'>(</font><font color='#0000FF'>const</font> loss_binary_hinge_<font color='#5555FF'>&amp;</font> <font color='#009900'>/*item*/</font>, std::ostream<font color='#5555FF'>&amp;</font> out<font face='Lucida Console'>)</font>
+        <b>{</b>
+            out <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>&lt;loss_binary_hinge/&gt;</font>";
+        <b>}</b>
+
+    <b>}</b>;
+
+    <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font><font color='#0000FF'>typename</font> SUBNET<font color='#5555FF'>&gt;</font>
+    <font color='#0000FF'>using</font> loss_binary_hinge <font color='#5555FF'>=</font> add_loss_layer<font color='#5555FF'>&lt;</font>loss_binary_hinge_, SUBNET<font color='#5555FF'>&gt;</font>;
+
+<font color='#009900'>// ----------------------------------------------------------------------------------------
+</font>
+    <font color='#0000FF'>class</font> <b><a name='loss_binary_log_'></a>loss_binary_log_</b> 
+    <b>{</b>
+    <font color='#0000FF'>public</font>:
+
+        <font color='#0000FF'>const</font> <font color='#0000FF'>static</font> <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>int</u></font> sample_expansion_factor <font color='#5555FF'>=</font> <font color='#979000'>1</font>;
+        <font color='#0000FF'>typedef</font> <font color='#0000FF'><u>float</u></font> label_type;
+
+        <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font>
+            <font color='#0000FF'>typename</font> SUB_TYPE,
+            <font color='#0000FF'>typename</font> label_iterator
+            <font color='#5555FF'>&gt;</font>
+        <font color='#0000FF'><u>void</u></font> <b><a name='to_label'></a>to_label</b> <font face='Lucida Console'>(</font>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> input_tensor,
+            <font color='#0000FF'>const</font> SUB_TYPE<font color='#5555FF'>&amp;</font> sub,
+            label_iterator iter
+        <font face='Lucida Console'>)</font> <font color='#0000FF'>const</font>
+        <b>{</b>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> output_tensor <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_output</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>output_tensor.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+
+            <font color='#0000FF'>const</font> <font color='#0000FF'><u>float</u></font><font color='#5555FF'>*</font> out_data <font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>host</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> i <font color='#5555FF'>=</font> <font color='#979000'>0</font>; i <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>i<font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#5555FF'>*</font>iter<font color='#5555FF'>+</font><font color='#5555FF'>+</font> <font color='#5555FF'>=</font> out_data[i];
+            <b>}</b>
+        <b>}</b>
+
+
+        <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font>
+            <font color='#0000FF'>typename</font> const_label_iterator,
+            <font color='#0000FF'>typename</font> SUBNET
+            <font color='#5555FF'>&gt;</font>
+        <font color='#0000FF'><u>double</u></font> <b><a name='compute_loss_value_and_gradient'></a>compute_loss_value_and_gradient</b> <font face='Lucida Console'>(</font>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> input_tensor,
+            const_label_iterator truth, 
+            SUBNET<font color='#5555FF'>&amp;</font> sub
+        <font face='Lucida Console'>)</font> <font color='#0000FF'>const</font>
+        <b>{</b>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> output_tensor <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_output</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            tensor<font color='#5555FF'>&amp;</font> grad <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_gradient_input</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>!</font><font color='#5555FF'>=</font> <font color='#979000'>0</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font color='#5555FF'>%</font>sample_expansion_factor <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>0</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> grad.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>output_tensor.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>grad.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         grad.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         grad.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+
+            tt::<font color='#BB00BB'>sigmoid</font><font face='Lucida Console'>(</font>grad, output_tensor<font face='Lucida Console'>)</font>;
+
+            <font color='#009900'>// The loss we output is the average loss over the mini-batch.
+</font>            <font color='#0000FF'>const</font> <font color='#0000FF'><u>double</u></font> scale <font color='#5555FF'>=</font> <font color='#979000'>1.0</font><font color='#5555FF'>/</font>output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'><u>double</u></font> loss <font color='#5555FF'>=</font> <font color='#979000'>0</font>;
+            <font color='#0000FF'><u>float</u></font><font color='#5555FF'>*</font> g <font color='#5555FF'>=</font> grad.<font color='#BB00BB'>host</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>const</font> <font color='#0000FF'><u>float</u></font><font color='#5555FF'>*</font> out_data <font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>host</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> i <font color='#5555FF'>=</font> <font color='#979000'>0</font>; i <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>i<font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#0000FF'>const</font> <font color='#0000FF'><u>float</u></font> y <font color='#5555FF'>=</font> <font color='#5555FF'>*</font>truth<font color='#5555FF'>+</font><font color='#5555FF'>+</font>;
+                <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>y <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#5555FF'>+</font><font color='#979000'>1</font> <font color='#5555FF'>|</font><font color='#5555FF'>|</font> y <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#5555FF'>-</font><font color='#979000'>1</font>, "<font color='#CC0000'>y: </font>" <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> y<font face='Lucida Console'>)</font>;
+                <font color='#0000FF'><u>float</u></font> temp;
+                <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>y <font color='#5555FF'>&gt;</font> <font color='#979000'>0</font><font face='Lucida Console'>)</font>
+                <b>{</b>
+                    temp <font color='#5555FF'>=</font> <font color='#BB00BB'>log1pexp</font><font face='Lucida Console'>(</font><font color='#5555FF'>-</font>out_data[i]<font face='Lucida Console'>)</font>;
+                    loss <font color='#5555FF'>+</font><font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font>temp;
+                    g[i] <font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font><font face='Lucida Console'>(</font>g[i]<font color='#5555FF'>-</font><font color='#979000'>1</font><font face='Lucida Console'>)</font>;
+                <b>}</b>
+                <font color='#0000FF'>else</font>
+                <b>{</b>
+                    temp <font color='#5555FF'>=</font> <font color='#5555FF'>-</font><font face='Lucida Console'>(</font><font color='#5555FF'>-</font>out_data[i]<font color='#5555FF'>-</font><font color='#BB00BB'>log1pexp</font><font face='Lucida Console'>(</font><font color='#5555FF'>-</font>out_data[i]<font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+                    loss <font color='#5555FF'>+</font><font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font>temp;
+                    g[i] <font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font>g[i];
+                <b>}</b>
+            <b>}</b>
+            <font color='#0000FF'>return</font> loss;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='serialize'></a>serialize</b><font face='Lucida Console'>(</font><font color='#0000FF'>const</font> loss_binary_log_<font color='#5555FF'>&amp;</font> , std::ostream<font color='#5555FF'>&amp;</font> out<font face='Lucida Console'>)</font>
+        <b>{</b>
+            <font color='#BB00BB'>serialize</font><font face='Lucida Console'>(</font>"<font color='#CC0000'>loss_binary_log_</font>", out<font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='deserialize'></a>deserialize</b><font face='Lucida Console'>(</font>loss_binary_log_<font color='#5555FF'>&amp;</font> , std::istream<font color='#5555FF'>&amp;</font> in<font face='Lucida Console'>)</font>
+        <b>{</b>
+            std::string version;
+            <font color='#BB00BB'>deserialize</font><font face='Lucida Console'>(</font>version, in<font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>version <font color='#5555FF'>!</font><font color='#5555FF'>=</font> "<font color='#CC0000'>loss_binary_log_</font>"<font face='Lucida Console'>)</font>
+                <font color='#0000FF'>throw</font> <font color='#BB00BB'>serialization_error</font><font face='Lucida Console'>(</font>"<font color='#CC0000'>Unexpected version found while deserializing dlib::loss_binary_log_.</font>"<font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> std::ostream<font color='#5555FF'>&amp;</font> <b><a name='operator'></a>operator</b><font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font><font face='Lucida Console'>(</font>std::ostream<font color='#5555FF'>&amp;</font> out, <font color='#0000FF'>const</font> loss_binary_log_<font color='#5555FF'>&amp;</font> <font face='Lucida Console'>)</font>
+        <b>{</b>
+            out <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>loss_binary_log</font>";
+            <font color='#0000FF'>return</font> out;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='to_xml'></a>to_xml</b><font face='Lucida Console'>(</font><font color='#0000FF'>const</font> loss_binary_log_<font color='#5555FF'>&amp;</font> <font color='#009900'>/*item*/</font>, std::ostream<font color='#5555FF'>&amp;</font> out<font face='Lucida Console'>)</font>
+        <b>{</b>
+            out <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>&lt;loss_binary_log/&gt;</font>";
+        <b>}</b>
+
+    <b>}</b>;
+
+    <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font><font color='#0000FF'>typename</font> SUBNET<font color='#5555FF'>&gt;</font>
+    <font color='#0000FF'>using</font> loss_binary_log <font color='#5555FF'>=</font> add_loss_layer<font color='#5555FF'>&lt;</font>loss_binary_log_, SUBNET<font color='#5555FF'>&gt;</font>;
+
+<font color='#009900'>// ----------------------------------------------------------------------------------------
+</font>
+    <font color='#0000FF'>class</font> <b><a name='loss_multiclass_log_'></a>loss_multiclass_log_</b> 
+    <b>{</b>
+    <font color='#0000FF'>public</font>:
+
+        <font color='#0000FF'>const</font> <font color='#0000FF'>static</font> <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>int</u></font> sample_expansion_factor <font color='#5555FF'>=</font> <font color='#979000'>1</font>;
+        <font color='#0000FF'>typedef</font> <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> label_type;
+
+        <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font>
+            <font color='#0000FF'>typename</font> SUB_TYPE,
+            <font color='#0000FF'>typename</font> label_iterator
+            <font color='#5555FF'>&gt;</font>
+        <font color='#0000FF'><u>void</u></font> <b><a name='to_label'></a>to_label</b> <font face='Lucida Console'>(</font>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> input_tensor,
+            <font color='#0000FF'>const</font> SUB_TYPE<font color='#5555FF'>&amp;</font> sub,
+            label_iterator iter
+        <font face='Lucida Console'>)</font> <font color='#0000FF'>const</font>
+        <b>{</b>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> output_tensor <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_output</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>output_tensor.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> ,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+
+
+            <font color='#009900'>// Note that output_tensor.k() should match the number of labels.
+</font>
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> i <font color='#5555FF'>=</font> <font color='#979000'>0</font>; i <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>i<font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#009900'>// The index of the largest output for this sample is the label.
+</font>                <font color='#5555FF'>*</font>iter<font color='#5555FF'>+</font><font color='#5555FF'>+</font> <font color='#5555FF'>=</font> <font color='#BB00BB'>index_of_max</font><font face='Lucida Console'>(</font><font color='#BB00BB'>rowm</font><font face='Lucida Console'>(</font><font color='#BB00BB'>mat</font><font face='Lucida Console'>(</font>output_tensor<font face='Lucida Console'>)</font>,i<font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+            <b>}</b>
+        <b>}</b>
+
+
+        <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font>
+            <font color='#0000FF'>typename</font> const_label_iterator,
+            <font color='#0000FF'>typename</font> SUBNET
+            <font color='#5555FF'>&gt;</font>
+        <font color='#0000FF'><u>double</u></font> <b><a name='compute_loss_value_and_gradient'></a>compute_loss_value_and_gradient</b> <font face='Lucida Console'>(</font>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> input_tensor,
+            const_label_iterator truth, 
+            SUBNET<font color='#5555FF'>&amp;</font> sub
+        <font face='Lucida Console'>)</font> <font color='#0000FF'>const</font>
+        <b>{</b>
+            <font color='#0000FF'>const</font> tensor<font color='#5555FF'>&amp;</font> output_tensor <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_output</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            tensor<font color='#5555FF'>&amp;</font> grad <font color='#5555FF'>=</font> sub.<font color='#BB00BB'>get_gradient_input</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>!</font><font color='#5555FF'>=</font> <font color='#979000'>0</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font color='#5555FF'>%</font>sample_expansion_factor <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>0</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> grad.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>input_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>output_tensor.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         output_tensor.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+            <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>grad.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> 
+                         grad.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>1</font>,"<font color='#CC0000'></font>"<font face='Lucida Console'>)</font>;
+
+            tt::<font color='#BB00BB'>softmax</font><font face='Lucida Console'>(</font>grad, output_tensor<font face='Lucida Console'>)</font>;
+
+            <font color='#009900'>// The loss we output is the average loss over the mini-batch.
+</font>            <font color='#0000FF'>const</font> <font color='#0000FF'><u>double</u></font> scale <font color='#5555FF'>=</font> <font color='#979000'>1.0</font><font color='#5555FF'>/</font>output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'><u>double</u></font> loss <font color='#5555FF'>=</font> <font color='#979000'>0</font>;
+            <font color='#0000FF'><u>float</u></font><font color='#5555FF'>*</font> g <font color='#5555FF'>=</font> grad.<font color='#BB00BB'>host</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> i <font color='#5555FF'>=</font> <font color='#979000'>0</font>; i <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>num_samples</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>i<font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#0000FF'>const</font> <font color='#0000FF'><u>long</u></font> y <font color='#5555FF'>=</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font><font face='Lucida Console'>)</font><font color='#5555FF'>*</font>truth<font color='#5555FF'>+</font><font color='#5555FF'>+</font>;
+                <font color='#009900'>// The network must produce a number of outputs that is equal to the number
+</font>                <font color='#009900'>// of labels when using this type of loss.
+</font>                <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>y <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>, "<font color='#CC0000'>y: </font>" <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> y <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>, output_tensor.k(): </font>" <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+                <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> k <font color='#5555FF'>=</font> <font color='#979000'>0</font>; k <font color='#5555FF'>&lt;</font> output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>k<font face='Lucida Console'>)</font>
+                <b>{</b>
+                    <font color='#0000FF'>const</font> <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> idx <font color='#5555FF'>=</font> i<font color='#5555FF'>*</font>output_tensor.<font color='#BB00BB'>k</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font color='#5555FF'>+</font>k;
+                    <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>k <font color='#5555FF'>=</font><font color='#5555FF'>=</font> y<font face='Lucida Console'>)</font>
+                    <b>{</b>
+                        loss <font color='#5555FF'>+</font><font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font><font color='#5555FF'>-</font>std::<font color='#BB00BB'>log</font><font face='Lucida Console'>(</font>g[idx]<font face='Lucida Console'>)</font>;
+                        g[idx] <font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font><font face='Lucida Console'>(</font>g[idx]<font color='#5555FF'>-</font><font color='#979000'>1</font><font face='Lucida Console'>)</font>;
+                    <b>}</b>
+                    <font color='#0000FF'>else</font>
+                    <b>{</b>
+                        g[idx] <font color='#5555FF'>=</font> scale<font color='#5555FF'>*</font>g[idx];
+                    <b>}</b>
+                <b>}</b>
+            <b>}</b>
+            <font color='#0000FF'>return</font> loss;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='serialize'></a>serialize</b><font face='Lucida Console'>(</font><font color='#0000FF'>const</font> loss_multiclass_log_<font color='#5555FF'>&amp;</font> , std::ostream<font color='#5555FF'>&amp;</font> out<font face='Lucida Console'>)</font>
+        <b>{</b>
+            <font color='#BB00BB'>serialize</font><font face='Lucida Console'>(</font>"<font color='#CC0000'>loss_multiclass_log_</font>", out<font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='deserialize'></a>deserialize</b><font face='Lucida Console'>(</font>loss_multiclass_log_<font color='#5555FF'>&amp;</font> , std::istream<font color='#5555FF'>&amp;</font> in<font face='Lucida Console'>)</font>
+        <b>{</b>
+            std::string version;
+            <font color='#BB00BB'>deserialize</font><font face='Lucida Console'>(</font>version, in<font face='Lucida Console'>)</font>;
+            <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>version <font color='#5555FF'>!</font><font color='#5555FF'>=</font> "<font color='#CC0000'>loss_multiclass_log_</font>"<font face='Lucida Console'>)</font>
+                <font color='#0000FF'>throw</font> <font color='#BB00BB'>serialization_error</font><font face='Lucida Console'>(</font>"<font color='#CC0000'>Unexpected version found while deserializing dlib::loss_multiclass_log_.</font>"<font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> std::ostream<font color='#5555FF'>&amp;</font> <b><a name='operator'></a>operator</b><font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font><font face='Lucida Console'>(</font>std::ostream<font color='#5555FF'>&amp;</font> out, <font color='#0000FF'>const</font> loss_multiclass_log_<font color='#5555FF'>&amp;</font> <font face='Lucida Console'>)</font>
+        <b>{</b>
+            out <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>loss_multiclass_log</font>";
+            <font color='#0000FF'>return</font> out;
+        <b>}</b>
+
+        <font color='#0000FF'>friend</font> <font color='#0000FF'><u>void</u></font> <b><a name='to_xml'></a>to_xml</b><font face='Lucida Console'>(</font><font color='#0000FF'>const</font> loss_multiclass_log_<font color='#5555FF'>&amp;</font> <font color='#009900'>/*item*/</font>, std::ostream<font color='#5555FF'>&amp;</font> out<font face='Lucida Console'>)</font>
+        <b>{</b>
+            out <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>&lt;loss_multiclass_log/&gt;</font>";
+        <b>}</b>
+
+    <b>}</b>;
+
+    <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font><font color='#0000FF'>typename</font> SUBNET<font color='#5555FF'>&gt;</font>
+    <font color='#0000FF'>using</font> loss_multiclass_log <font color='#5555FF'>=</font> add_loss_layer<font color='#5555FF'>&lt;</font>loss_multiclass_log_, SUBNET<font color='#5555FF'>&gt;</font>;
+
+<font color='#009900'>// ----------------------------------------------------------------------------------------
+</font>
+<b>}</b>
+
+<font color='#0000FF'>#endif</font> <font color='#009900'>// DLIB_DNn_LOSS_H_
+</font>
+
+</pre></body></html>

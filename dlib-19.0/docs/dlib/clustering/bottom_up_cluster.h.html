@@ -1,0 +1,141 @@
+<html><!-- Created using the cpp_pretty_printer from the dlib C++ library.  See http://dlib.net for updates. --><head><title>dlib C++ Library - bottom_up_cluster.h</title></head><body bgcolor='white'><pre>
+<font color='#009900'>// Copyright (C) 2015  Davis E. King (davis@dlib.net)
+</font><font color='#009900'>// License: Boost Software License   See LICENSE.txt for the full license.
+</font><font color='#0000FF'>#ifndef</font> DLIB_BOTTOM_uP_CLUSTER_Hh_
+<font color='#0000FF'>#define</font> DLIB_BOTTOM_uP_CLUSTER_Hh_
+
+<font color='#0000FF'>#include</font> <font color='#5555FF'>&lt;</font>queue<font color='#5555FF'>&gt;</font>
+<font color='#0000FF'>#include</font> <font color='#5555FF'>&lt;</font>map<font color='#5555FF'>&gt;</font>
+
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='bottom_up_cluster_abstract.h.html'>bottom_up_cluster_abstract.h</a>"
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='../algs.h.html'>../algs.h</a>"
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='../matrix.h.html'>../matrix.h</a>"
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='../disjoint_subsets.h.html'>../disjoint_subsets.h</a>"
+<font color='#0000FF'>#include</font> "<a style='text-decoration:none' href='../graph_utils.h.html'>../graph_utils.h</a>"
+
+
+<font color='#0000FF'>namespace</font> dlib
+<b>{</b>
+
+<font color='#009900'>// ----------------------------------------------------------------------------------------
+</font>
+    <font color='#0000FF'>namespace</font> buc_impl
+    <b>{</b>
+        <font color='#0000FF'>inline</font> <font color='#0000FF'><u>void</u></font> <b><a name='merge_sets'></a>merge_sets</b> <font face='Lucida Console'>(</font>
+            matrix<font color='#5555FF'>&lt;</font><font color='#0000FF'><u>double</u></font><font color='#5555FF'>&gt;</font><font color='#5555FF'>&amp;</font> dists,
+            <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> dest,
+            <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> src
+        <font face='Lucida Console'>)</font>
+        <b>{</b>
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> r <font color='#5555FF'>=</font> <font color='#979000'>0</font>; r <font color='#5555FF'>&lt;</font> dists.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>r<font face='Lucida Console'>)</font>
+                <font color='#BB00BB'>dists</font><font face='Lucida Console'>(</font>dest,r<font face='Lucida Console'>)</font> <font color='#5555FF'>=</font> <font color='#BB00BB'>dists</font><font face='Lucida Console'>(</font>r,dest<font face='Lucida Console'>)</font> <font color='#5555FF'>=</font> std::<font color='#BB00BB'>max</font><font face='Lucida Console'>(</font><font color='#BB00BB'>dists</font><font face='Lucida Console'>(</font>r,dest<font face='Lucida Console'>)</font>, <font color='#BB00BB'>dists</font><font face='Lucida Console'>(</font>r,src<font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#0000FF'>struct</font> <b><a name='compare_dist'></a>compare_dist</b>
+        <b>{</b>
+            <font color='#0000FF'><u>bool</u></font> <b><a name='operator'></a>operator</b><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font face='Lucida Console'>(</font>
+                <font color='#0000FF'>const</font> sample_pair<font color='#5555FF'>&amp;</font> a,
+                <font color='#0000FF'>const</font> sample_pair<font color='#5555FF'>&amp;</font> b
+            <font face='Lucida Console'>)</font> <font color='#0000FF'>const</font>
+            <b>{</b>
+                <font color='#0000FF'>return</font> a.<font color='#BB00BB'>distance</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>&gt;</font> b.<font color='#BB00BB'>distance</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <b>}</b>
+        <b>}</b>;
+    <b>}</b>
+
+<font color='#009900'>// ----------------------------------------------------------------------------------------
+</font>
+    <font color='#0000FF'>template</font> <font color='#5555FF'>&lt;</font>
+        <font color='#0000FF'>typename</font> EXP
+        <font color='#5555FF'>&gt;</font>
+    <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> <b><a name='bottom_up_cluster'></a>bottom_up_cluster</b> <font face='Lucida Console'>(</font>
+        <font color='#0000FF'>const</font> matrix_exp<font color='#5555FF'>&lt;</font>EXP<font color='#5555FF'>&gt;</font><font color='#5555FF'>&amp;</font> dists_,
+        std::vector<font color='#5555FF'>&lt;</font><font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font><font color='#5555FF'>&gt;</font><font color='#5555FF'>&amp;</font> labels,
+        <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> min_num_clusters,
+        <font color='#0000FF'><u>double</u></font> max_dist <font color='#5555FF'>=</font> std::numeric_limits<font color='#5555FF'>&lt;</font><font color='#0000FF'><u>double</u></font><font color='#5555FF'>&gt;</font>::<font color='#BB00BB'>infinity</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>
+    <font face='Lucida Console'>)</font>
+    <b>{</b>
+        matrix<font color='#5555FF'>&lt;</font><font color='#0000FF'><u>double</u></font><font color='#5555FF'>&gt;</font> dists <font color='#5555FF'>=</font> matrix_cast<font color='#5555FF'>&lt;</font><font color='#0000FF'><u>double</u></font><font color='#5555FF'>&gt;</font><font face='Lucida Console'>(</font>dists_<font face='Lucida Console'>)</font>;
+        <font color='#009900'>// make sure requires clause is not broken
+</font>        <font color='#BB00BB'>DLIB_CASSERT</font><font face='Lucida Console'>(</font>dists.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> dists.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>&amp;</font><font color='#5555FF'>&amp;</font> min_num_clusters <font color='#5555FF'>&gt;</font> <font color='#979000'>0</font>, 
+            "<font color='#CC0000'>\t unsigned long bottom_up_cluster()</font>"
+            <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>\n\t Invalid inputs were given to this function.</font>"
+            <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>\n\t dists.nr(): </font>" <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> dists.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> 
+            <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>\n\t dists.nc(): </font>" <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> dists.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> 
+            <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> "<font color='#CC0000'>\n\t min_num_clusters: </font>" <font color='#5555FF'>&lt;</font><font color='#5555FF'>&lt;</font> min_num_clusters 
+            <font face='Lucida Console'>)</font>;
+
+        <font color='#0000FF'>using</font> <font color='#0000FF'>namespace</font> buc_impl;
+
+        labels.<font color='#BB00BB'>resize</font><font face='Lucida Console'>(</font>dists.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+        disjoint_subsets sets;
+        sets.<font color='#BB00BB'>set_size</font><font face='Lucida Console'>(</font>dists.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+        <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>labels.<font color='#BB00BB'>size</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>0</font><font face='Lucida Console'>)</font>
+            <font color='#0000FF'>return</font> <font color='#979000'>0</font>;
+
+        <font color='#009900'>// push all the edges in the graph into a priority queue so the best edges to merge
+</font>        <font color='#009900'>// come first.
+</font>        std::priority_queue<font color='#5555FF'>&lt;</font>sample_pair, std::vector<font color='#5555FF'>&lt;</font>sample_pair<font color='#5555FF'>&gt;</font>, compare_dist<font color='#5555FF'>&gt;</font> que;
+        <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> r <font color='#5555FF'>=</font> <font color='#979000'>0</font>; r <font color='#5555FF'>&lt;</font> dists.<font color='#BB00BB'>nr</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>r<font face='Lucida Console'>)</font>
+            <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>long</u></font> c <font color='#5555FF'>=</font> r<font color='#5555FF'>+</font><font color='#979000'>1</font>; c <font color='#5555FF'>&lt;</font> dists.<font color='#BB00BB'>nc</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>c<font face='Lucida Console'>)</font>
+                que.<font color='#BB00BB'>push</font><font face='Lucida Console'>(</font><font color='#BB00BB'>sample_pair</font><font face='Lucida Console'>(</font>r,c,<font color='#BB00BB'>dists</font><font face='Lucida Console'>(</font>r,c<font face='Lucida Console'>)</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+
+        <font color='#009900'>// Now start merging nodes.
+</font>        <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> iter <font color='#5555FF'>=</font> min_num_clusters; iter <font color='#5555FF'>&lt;</font> sets.<font color='#BB00BB'>size</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>iter<font face='Lucida Console'>)</font>
+        <b>{</b>
+            <font color='#009900'>// find the next best thing to merge.
+</font>            <font color='#0000FF'><u>double</u></font> best_dist <font color='#5555FF'>=</font> que.<font color='#BB00BB'>top</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>.<font color='#BB00BB'>distance</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> a <font color='#5555FF'>=</font> sets.<font color='#BB00BB'>find_set</font><font face='Lucida Console'>(</font>que.<font color='#BB00BB'>top</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>.<font color='#BB00BB'>index1</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+            <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> b <font color='#5555FF'>=</font> sets.<font color='#BB00BB'>find_set</font><font face='Lucida Console'>(</font>que.<font color='#BB00BB'>top</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>.<font color='#BB00BB'>index2</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+            que.<font color='#BB00BB'>pop</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <font color='#009900'>// we have been merging and modifying the distances, so make sure this distance
+</font>            <font color='#009900'>// is still valid and these guys haven't been merged already.
+</font>            <font color='#0000FF'>while</font><font face='Lucida Console'>(</font>a <font color='#5555FF'>=</font><font color='#5555FF'>=</font> b <font color='#5555FF'>|</font><font color='#5555FF'>|</font> best_dist <font color='#5555FF'>&lt;</font> <font color='#BB00BB'>dists</font><font face='Lucida Console'>(</font>a,b<font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#009900'>// Haven't merged it yet, so put it back in with updated distance for
+</font>                <font color='#009900'>// reconsideration later.
+</font>                <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>a <font color='#5555FF'>!</font><font color='#5555FF'>=</font> b<font face='Lucida Console'>)</font>
+                    que.<font color='#BB00BB'>push</font><font face='Lucida Console'>(</font><font color='#BB00BB'>sample_pair</font><font face='Lucida Console'>(</font>a, b, <font color='#BB00BB'>dists</font><font face='Lucida Console'>(</font>a, b<font face='Lucida Console'>)</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+
+                best_dist <font color='#5555FF'>=</font> que.<font color='#BB00BB'>top</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>.<font color='#BB00BB'>distance</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+                a <font color='#5555FF'>=</font> sets.<font color='#BB00BB'>find_set</font><font face='Lucida Console'>(</font>que.<font color='#BB00BB'>top</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>.<font color='#BB00BB'>index1</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+                b <font color='#5555FF'>=</font> sets.<font color='#BB00BB'>find_set</font><font face='Lucida Console'>(</font>que.<font color='#BB00BB'>top</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>.<font color='#BB00BB'>index2</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font><font face='Lucida Console'>)</font>;
+                que.<font color='#BB00BB'>pop</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+            <b>}</b>
+
+
+            <font color='#009900'>// now merge these sets if the best distance is small enough
+</font>            <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>best_dist <font color='#5555FF'>&gt;</font> max_dist<font face='Lucida Console'>)</font>
+                <font color='#0000FF'>break</font>;
+            <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> news <font color='#5555FF'>=</font> sets.<font color='#BB00BB'>merge_sets</font><font face='Lucida Console'>(</font>a,b<font face='Lucida Console'>)</font>;
+            <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> olds <font color='#5555FF'>=</font> <font face='Lucida Console'>(</font>news<font color='#5555FF'>=</font><font color='#5555FF'>=</font>a<font face='Lucida Console'>)</font>?b:a;
+            <font color='#BB00BB'>merge_sets</font><font face='Lucida Console'>(</font>dists, news, olds<font face='Lucida Console'>)</font>;
+        <b>}</b>
+
+        <font color='#009900'>// figure out which cluster each element is in.  Also make sure the labels are
+</font>        <font color='#009900'>// contiguous.
+</font>        std::map<font color='#5555FF'>&lt;</font><font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font>, <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font><font color='#5555FF'>&gt;</font> relabel;
+        <font color='#0000FF'>for</font> <font face='Lucida Console'>(</font><font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> r <font color='#5555FF'>=</font> <font color='#979000'>0</font>; r <font color='#5555FF'>&lt;</font> labels.<font color='#BB00BB'>size</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>; <font color='#5555FF'>+</font><font color='#5555FF'>+</font>r<font face='Lucida Console'>)</font>
+        <b>{</b>
+            <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> l <font color='#5555FF'>=</font> sets.<font color='#BB00BB'>find_set</font><font face='Lucida Console'>(</font>r<font face='Lucida Console'>)</font>;
+            <font color='#009900'>// relabel to make contiguous
+</font>            <font color='#0000FF'>if</font> <font face='Lucida Console'>(</font>relabel.<font color='#BB00BB'>count</font><font face='Lucida Console'>(</font>l<font face='Lucida Console'>)</font> <font color='#5555FF'>=</font><font color='#5555FF'>=</font> <font color='#979000'>0</font><font face='Lucida Console'>)</font>
+            <b>{</b>
+                <font color='#0000FF'><u>unsigned</u></font> <font color='#0000FF'><u>long</u></font> next <font color='#5555FF'>=</font> relabel.<font color='#BB00BB'>size</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+                relabel[l] <font color='#5555FF'>=</font> next;
+            <b>}</b>
+            labels[r] <font color='#5555FF'>=</font> relabel[l];
+        <b>}</b>
+
+
+        <font color='#0000FF'>return</font> relabel.<font color='#BB00BB'>size</font><font face='Lucida Console'>(</font><font face='Lucida Console'>)</font>;
+    <b>}</b>
+
+<font color='#009900'>// ----------------------------------------------------------------------------------------
+</font>
+<b>}</b>
+
+<font color='#0000FF'>#endif</font> <font color='#009900'>// DLIB_BOTTOM_uP_CLUSTER_Hh_
+</font>
+
+</pre></body></html>

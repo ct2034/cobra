@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html xmlns:gcse="googleCustomSearch"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="shortcut icon" href="dlib-icon.ico"><meta name="verify-v1" content="02MiiaFNVzS5/u0eQhsy3/knioFHsia1X3DXRpHkE6I="><meta name="google-site-verification" content="DGSSJMKDomaDaDTIRJ8jDkv0YMx9Cz7OESbXHjjr6Jw"><title>dlib C++ Library
+               - Release notes</title><script type="text/javascript" src="dlib.js"></script><link rel="stylesheet" type="text/css" href="dlib.css"></head><body><a name="top"></a><div id="page_header"><a href="http://dlib.net"><img src="dlib-logo.png"></a></div><div id="top_content"><div id="main_menu" class="menu"><div class="menu_top"><b>The Library</b><ul class="tree"><li><a href="algorithms.html" class="menu">Algorithms</a></li><li><a href="api.html" class="menu">API Wrappers</a></li><li><a href="bayes.html" class="menu">Bayesian Nets</a></li><li><a href="compression.html" class="menu">Compression</a></li><li><a href="containers.html" class="menu">Containers</a></li><li><a href="graph_tools.html" class="menu">Graph Tools</a></li><li><a href="imaging.html" class="menu">Image Processing</a></li><li><a href="linear_algebra.html" class="menu">Linear Algebra</a></li><li><a href="ml.html" class="menu">Machine Learning</a></li><li><a href="metaprogramming.html" class="menu">Metaprogramming</a></li><li><a href="other.html" class="menu">Miscellaneous</a></li><li><a href="network.html" class="menu">Networking</a></li><li><a href="optimization.html" class="menu">Optimization</a></li><li><a href="parsing.html" class="menu">Parsing</a></li></ul><br><b>Help/Info</b><ul class="tree"><li><a href="http://blog.dlib.net" class="menu">Dlib Blog</a></li><li><a onclick="Toggle(this)" class="sub menu"><img src="plus.gif">Examples: C++</a><ul style="display:none;"><li><a href="3d_point_cloud_ex.cpp.html" class="menu">3D Point Cloud</a></li><li><a href="assignment_learning_ex.cpp.html" class="menu">Assignment Learning</a></li><li><a href="file_to_code_ex.cpp.html" class="menu">Base64 Encoder</a></li><li><a href="bayes_net_from_disk_ex.cpp.html" class="menu">Bayesian Network From Disk</a></li><li><a href="bayes_net_gui_ex.cpp.html" class="menu">Bayesian Network GUI</a></li><li><a href="bayes_net_ex.cpp.html" class="menu">Bayesian Network</a></li><li><a href="bridge_ex.cpp.html" class="menu">Bridge</a></li><li><a href="bsp_ex.cpp.html" class="menu">BSP</a></li><li><a href="svm_c_ex.cpp.html" class="menu">C-Support Vector Machine</a></li><li><a href="compress_stream_ex.cpp.html#_top" class="menu">Cmd Line Parser</a></li><li><a href="compress_stream_ex.cpp.html" class="menu">Compress Stream</a></li><li><a href="config_reader_ex.cpp.html" class="menu">Config File Reader</a></li><li><a href="custom_trainer_ex.cpp.html" class="menu">Custom Trainers</a></li><li><a href="dnn_imagenet_ex.cpp.html" class="menu">Deep Learning Imagenet Classifier</a></li><li><a href="dnn_imagenet_train_ex.cpp.html" class="menu">Deep Learning Imagenet Trainer </a></li><li><a href="dnn_inception_ex.cpp.html" class="menu">Deep Learning Inception</a></li><li><a href="dnn_introduction_ex.cpp.html" class="menu">Deep Learning Introduction Part 1</a></li><li><a href="dnn_introduction2_ex.cpp.html" class="menu">Deep Learning Introduction Part 2</a></li><li><a href="dir_nav_ex.cpp.html" class="menu">Directory Navigation</a></li><li><a href="empirical_kernel_map_ex.cpp.html" class="menu">Empirical Kernel Map</a></li><li><a href="face_detection_ex.cpp.html" class="menu">Face Detection</a></li><li><a href="face_landmark_detection_ex.cpp.html" class="menu">Face Landmark Detection</a></li><li><a href="fhog_ex.cpp.html" class="menu">FHOG Feature Extraction</a></li><li><a href="fhog_object_detector_ex.cpp.html" class="menu">FHOG Object Detection</a></li><li><a href="graph_labeling_ex.cpp.html" class="menu">Graph Labeling</a></li><li><a href="gui_api_ex.cpp.html" class="menu">GUI</a></li><li><a href="hough_transform_ex.cpp.html" class="menu">Hough Transform</a></li><li><a href="server_http_ex.cpp.html" class="menu">HTTP Server</a></li><li><a href="image_ex.cpp.html" class="menu">Image</a></li><li><a href="iosockstream_ex.cpp.html" class="menu">IO Socket Streams</a></li><li><a href="server_iostream_ex.cpp.html" class="menu">IO Streams Server</a></li><li><a href="kcentroid_ex.cpp.html" class="menu">Kernel Centroid</a></li><li><a href="kkmeans_ex.cpp.html" class="menu">Kernel K-Means Clustering</a></li><li><a href="krr_regression_ex.cpp.html" class="menu">Kernel Ridge Regression</a></li><li><a href="krls_filter_ex.cpp.html" class="menu">Kernel RLS Filtering</a></li><li><a href="krls_ex.cpp.html" class="menu">Kernel RLS Regression</a></li><li><a href="krr_classification_ex.cpp.html" class="menu">KRR Classification</a></li><li><a href="learning_to_track_ex.cpp.html" class="menu">Learning to Track</a></li><li><a href="max_cost_assignment_ex.cpp.html" class="menu">Linear Assignment Problems</a></li><li><a href="linear_manifold_regularizer_ex.cpp.html" class="menu">Linear Manifold Regularizer</a></li><li><a href="mpc_ex.cpp.html" class="menu">Linear Model Predictive Control</a></li><li><a href="logger_ex_2.cpp.html" class="menu">Logger Advanced</a></li><li><a href="logger_custom_output_ex.cpp.html" class="menu">Logger Custom Output</a></li><li><a href="logger_ex.cpp.html" class="menu">Logger</a></li><li><a href="matrix_expressions_ex.cpp.html" class="menu">Matrix Expressions</a></li><li><a href="matrix_ex.cpp.html" class="menu">Matrix</a></li><li><a href="member_function_pointer_ex.cpp.html" class="menu">Member Function Pointer</a></li><li><a href="model_selection_ex.cpp.html" class="menu">Model Selection</a></li><li><a href="multiclass_classification_ex.cpp.html" class="menu">Multiclass Classification</a></li><li><a href="multithreaded_object_ex.cpp.html" class="menu">Multithreaded Object</a></li><li><a href="mlp_ex.cpp.html" class="menu">Neural Network</a></li><li><a href="least_squares_ex.cpp.html" class="menu">Non-Linear Least Squares</a></li><li><a href="svm_ex.cpp.html" class="menu">Nu-Support Vector Machine</a></li><li><a href="integrate_function_adapt_simp_ex.cpp.html" class="menu">Numerical Integration</a></li><li><a href="object_detector_advanced_ex.cpp.html" class="menu">Object Detector Advanced</a></li><li><a href="object_detector_ex.cpp.html" class="menu">Object Detector</a></li><li><a href="one_class_classifiers_ex.cpp.html" class="menu">One Class Classifiers</a></li><li><a href="svm_pegasos_ex.cpp.html" class="menu">Online SVM</a></li><li><a href="optimization_ex.cpp.html" class="menu">Optimization</a></li><li><a href="parallel_for_ex.cpp.html" class="menu">Parallel For Loops</a></li><li><a href="pipe_ex_2.cpp.html" class="menu">Pipe 2</a></li><li><a href="pipe_ex.cpp.html" class="menu">Pipe</a></li><li><a href="quantum_computing_ex.cpp.html" class="menu">Quantum Computing</a></li><li><a href="queue_ex.cpp.html" class="menu">Queue</a></li><li><a href="rank_features_ex.cpp.html" class="menu">Rank Features</a></li><li><a href="rvm_ex.cpp.html" class="menu">Relevance Vector Classification</a></li><li><a href="rvm_regression_ex.cpp.html" class="menu">Relevance Vector Regression</a></li><li><a href="running_stats_ex.cpp.html" class="menu">Running Stats</a></li><li><a href="sequence_labeler_ex.cpp.html" class="menu">Sequence Labeling</a></li><li><a href="sequence_segmenter_ex.cpp.html" class="menu">Sequence Segmentation</a></li><li><a href="sockets_ex.cpp.html" class="menu">Sockets</a></li><li><a href="sockstreambuf_ex.cpp.html" class="menu">Sockstreambuf</a></li><li><a href="svm_sparse_ex.cpp.html" class="menu">Sparse Vectors</a></li><li><a href="sqlite_ex.cpp.html" class="menu">SQLite</a></li><li><a href="std_allocator_ex.cpp.html" class="menu">Std C++ Allocator</a></li><li><a href="svm_struct_ex.cpp.html" class="menu">Structural Support Vector Machines</a></li><li><a href="svr_ex.cpp.html" class="menu">Support Vector Regression</a></li><li><a href="surf_ex.cpp.html" class="menu">SURF</a></li><li><a href="svm_rank_ex.cpp.html" class="menu">SVM-Rank</a></li><li><a href="thread_function_ex.cpp.html" class="menu">Thread Function</a></li><li><a href="thread_pool_ex.cpp.html" class="menu">Thread Pool</a></li><li><a href="threaded_object_ex.cpp.html" class="menu">Threaded Object</a></li><li><a href="threads_ex.cpp.html" class="menu">Threads</a></li><li><a href="timer_ex.cpp.html" class="menu">Timer</a></li><li><a href="train_object_detector.cpp.html" class="menu">Train Object Detector</a></li><li><a href="train_shape_predictor_ex.cpp.html" class="menu">Train Shape Predictor</a></li><li><a href="using_custom_kernels_ex.cpp.html" class="menu">Using Custom Kernels</a></li><li><a href="video_tracking_ex.cpp.html" class="menu">Video Object Tracking</a></li><li><a href="webcam_face_pose_ex.cpp.html" class="menu">Webcam Face Pose Estimation</a></li><li><a href="xml_parser_ex.cpp.html" class="menu">XML Parser</a></li></ul></li><li><a onclick="Toggle(this)" class="sub menu"><img src="plus.gif">Examples: Python</a><ul style="display:none;"><li><a href="face_detector.py.html" class="menu">Face Detector</a></li><li><a href="face_landmark_detection.py.html" class="menu">Face Landmark Detection</a></li><li><a href="find_candidate_object_locations.py.html" class="menu">find candidate object locations</a></li><li><a href="max_cost_assignment.py.html" class="menu">Linear Assignment Problems</a></li><li><a href="sequence_segmenter.py.html" class="menu">Sequence Segmenter</a></li><li><a href="svm_struct.py.html" class="menu">Structural Support Vector Machines</a></li><li><a href="svm_rank.py.html" class="menu">SVM-Rank</a></li><li><a href="train_object_detector.py.html" class="menu">Train Object Detector</a></li><li><a href="train_shape_predictor.py.html" class="menu">Train Shape Predictor</a></li><li><a href="correlation_tracker.py.html" class="menu">Video Object Tracking</a></li></ul></li><li><a href="faq.html" class="menu">FAQ</a></li><li><a href="index.html" class="menu">Home</a></li><li><a href="compile.html" class="menu">How to compile</a></li><li><a href="howto_contribute.html" class="menu">How to contribute</a></li><li><a href="term_index.html" class="menu">Index</a></li><li><a href="intro.html" class="menu">Introduction</a></li><li><a href="license.html" class="menu">License</a></li><li><a href="python/index.html" class="menu">Python API</a></li><li><a href="books.html" class="menu">Suggested Books</a></li><li><a href="http://sourceforge.net/p/dclib/wiki/Known_users/" class="menu">Who uses dlib?</a></li></ul><br><b>Current Release</b><ul class="tree"><li><a href="change_log.html" class="menu">Change Log</a></li><li><a href="release_notes.html" class="menu">Release Notes</a></li><li>Version: 19.0</li></ul><br></div><div class="menu_footer">
+      Last Modified:<br>Jun 25, 2016</div></div><div id="main_text"><div id="main_text_title">Release notes</div><div id="main_text_body"><h1 style="margin:0px;">Release 19.0</h1><u>Release date</u>: Jun 25, 2016<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - A deep learning toolkit using CPU and/or GPU hardware.  Some major elements
+     of this are:
+      - Clean and fully documented C++11 API
+      - Clean tutorials: see dnn_introduction_ex.cpp and dnn_introduction2_ex.cpp
+      - Uses cuDNN v5.0
+      - Multi-GPU support
+      - Automatic learning rate adjustment
+      - A pretrained 1000 class Imagenet classifier (see dnn_imagenet_ex.cpp)
+   - Optimization Tools
+      - Added find_optimal_parameters()
+      - Added elastic_net class
+      - Added the option to use the elastic net regularizer to the OCA solver.
+      - Added an option to solve the L2-loss version of the SVM objective function to svm_c_linear_dcd_trainer.
+      - Added solve_qp_box_constrained()
+   - Image Processing
+      - Added random_color_transform, disturb_colors(), and apply_random_color_offset().
+      - load_image() now supports loading GIF files.
+   - Many improvements to the MATLAB binding API  
+      - Automatically link to MATLAB's Intel MKL when used on linux.
+      - struct support
+      - mex functions can have up to 20 arguments instead of 10.
+      - In place operation.  Made column major matrices directly wrap MATLAB
+        matrix objects when used inside mex files.  This way, if you use
+        matrix_colmajor or fmatrix_colmajor in a mex file it will not do any
+        unnecessary copying or transposing.
+      - Catch ctrl+c presses in MATLAB console.  Allowing early termination of mex functions.
+      - When used inside mex files, DLIB_ASSERTS won't kill the MATLAB process,
+        just throw an exception.
+      - Made cerr print in MATLAB as a red warning message.
+   - load_mnist_dataset()
+   - Added a constructor for seeding rand with a time_t.
+   - Added subm_clipped()
+   - Added unserialize.
+   - Added running_gradient
+
+Non-Backwards Compatible Changes:
+   - Everything in dlib/matlab/call_matlab.h is now in the dlib namespace.
+   - DLIB_TEST() and DLIB_TEST_MSG() macros now require you to terminate them with a ;
+
+Bug fixes:
+   - Fixed bug in 10 argument version of call_matlab() and also cleaned up a few
+     minor things.
+   - setup.py and CMake scripts work in a few more contexts.
+   - Fixed compiler errors in visual studio 2015.
+   - Fixed a bug in gaussian_blur() that caused messed up outputs when big
+     sigma values were used on some pixel types.
+   - Fixed minor bugs in join_rows() and join_cols(). They didn't work when one
+     of the matrices was empty.
+
+Other:
+   - Made CMake scripts uniformly require CMake version 2.8.4.
+   - Faster fHOG feature extraction / face detection
+   - CMake scripts now enable C++11 by default
+   - Gave array2d and matrix move constructors and move assignment operators.  Matrix
+     can also now be created from initializer lists.
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.18</h1><u>Release date</u>: Oct 28, 2015<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Added the set_ptrm() routine for assigning dlib::matrix objects to arbitrary
+     memory blocks.
+      
+Non-Backwards Compatible Changes:
+
+Bug fixes:
+   - Fixed a bug that caused cmake to not provide the correct preprocessor
+     definitions until cmake was run twice. This was causing some projects to
+     not build properly.
+
+Other:
+   - Improvements to build system:
+      - Ehsan Azarnasab contributed a setup.py so the dlib Python API can be
+        installed via the usual 'python setup.py install' command. 
+      - Séverin Lemaignan upgraded dlib's CMake scripts so they include an 
+        install target.  Now dlib can be installed system wide by executing 
+        'cmake PATH_TO_DLIB; make install'.  This also includes installing the
+        appropriate scripts for CMake's find_package(dlib) to work.
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.17</h1><u>Release date</u>: Aug 15, 2015<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - More clustering tools:
+      - Added bottom_up_cluster() and find_clusters_using_angular_kmeans()
+        routines.
+      - Added a --cluster option to the imglab tool.  This lets you cluster
+        objects into groups of similar appearance/pose.
+   - Improved the shape_predictor.  In particular, it can now be learned from
+     datasets where some landmarks are missing.  The shape_predictor also now
+     outputs a sparse feature vector that encodes which leafs are used on each
+     tree to make a prediction.
+      
+Non-Backwards Compatible Changes:
+   - extract_highdim_face_lbp_descriptors() produces slightly different output.
+
+Bug fixes:
+   - Fixed a minor bug in extract_highdim_face_lbp_descriptors() which was
+     pointed out by Yan Xu. One of the face locations was mistakenly used twice
+     while another was skipped. This change breaks backwards compatibility with
+     the previous feature extraction output but should slightly improve
+     accuracy of classifiers trained using these features.
+   - Fixed jet() and heatmap() so they work on empty images.
+   - The SQLite transaction object did not function correctly when compiled 
+     in a C++11 program.  Since its destructor can throw, an exception
+     specification needed to be added indicating that this was possible since
+     destructors are now noexcept by default in C++11.
+   - Fixed a bug pointed out by Ernesto Tapia that could cause matrix
+     expressions that involve sub matrix views (e.g. colm) to produce the wrong
+     results when the BLAS bindings were enabled.
+   - Added an if to avoid a possible division by zero inside spectral_cluster().
+   - Fixed a bug in parse_xml(). It failed to check if the given input stream
+     was valid before trying to parse it.
+
+Other:
+
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.16</h1><u>Release date</u>: Jun 3, 2015<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Added a linear model predictive control solver.  See the mpc_ex.cpp example
+     program for details.
+   - Thanks to Patrick Snape, the correlation_tracker can now be used from Python.
+      
+Non-Backwards Compatible Changes:
+   - The camera_transform's second operator() method now takes 3 arguments
+     instead of 2.  This is to allow it to output the z distance in addition to
+     scale.
+
+Bug fixes:
+   - Fixed a bug in the eigenvalue_decomposition which could occur when a
+     symmetric matrix was used along with the LAPACK bindings.
+   - Fixed a bug where the last column of data in a file wasn't loaded on some
+     OS X machines when load_libsvm_formatted_data() was called.
+
+Other:
+   - Added a hard iteration limit to a number of the SVM solvers.
+   - Adrian Rosebrock graciously setup an OS X machine for dlib testing, which
+     resulted in improved CMake python scripts on OS X machines.
+   - Improved the way overlapping points are rendered by the perspective_window.
+
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.15</h1><u>Release date</u>: Apr 29, 2015<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Added a number of tools for working with 3D data:
+      - Added the perspective_window which is a tool for displaying 3D point clouds.
+      - Added camera_transform.  It performs the 3D to 2D mapping needed to visualize 3D
+        data.
+      - Added point_transform_affine3d as well as functions for creating such transforms:
+        rotate_around_x(), rotate_around_y(), rotate_around_z(), and translate_point().
+   - Added draw_solid_circle() for drawing on images.
+   - Added get_best_hough_point() to the hough_transform.
+   - Thanks to Jack Culpepper, the python API for object detection now outputs detection
+     confidences.  
+   - Added lspi, an implementation of the least-squares policy iteration algorithm.
+      
+Non-Backwards Compatible Changes:
+   - The shape_predictor and shape_predictor_trainer had a non-optimal behavior when used
+     with objects that have non-square bounding boxes. This has been fixed but will cause
+     models that were trained with the previous version of dlib to not work as accurately if
+     they used non-square boxes. So you might have to retrain your models when updating dlib.
+
+Bug fixes:
+   - Fixed a bug which prevented add_image_rotations() from compiling.
+
+Other:
+   - The imglab tool now allows the user to click and drag annotations around by holding
+     shift and right clicking.
+
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.14</h1><u>Release date</u>: Mar 01, 2015<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Added spectral_cluster()
+   - Added sub_image() and sub_image_proxy
+   - Added set_all_logging_headers()
+
+Non-Backwards Compatible Changes:
+
+Bug fixes:
+   - Fixed a bug that caused the correlation_tracker to erroneously trigger an assert when
+     run in debug mode.
+
+Other:
+   - Improved the usability of the new drectanle object.
+   - Optimized extract_fhog_features() for the case where cell_size==1. This makes it about
+     4x faster in that case.
+   - Made it so you can compose point transform objects via operator *.
+
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.13</h1><u>Release date</u>: Feb 03, 2015<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Added the correlation_tracker object
+   - Added the option to force the last weight to 1 to structural_assignment_trainer.
+   - Added max_point_interpolated()
+   - Added the drectangle object
+   - New Python Tools:
+      - Patrick Snape contributed a Python binding for the face landmarking tool and 
+        the general purpose shape prediction/training tools.
+      - Vinh Khuc contributed a Python binding for find_candidate_object_locations(),
+        dlib's implementation of the selective search object location proposal method.
+
+Non-Backwards Compatible Changes:
+
+Bug fixes:
+   - Fixed a bug in extract_image_chips() and get_mapping_to_chip() that caused
+     incorrect outputs when the requested chip stretched the image unevenly
+     vertically or horizontally.
+   - Made CMake check that libpng and libjpeg actually contain the link symbols
+     they are supposed to since, on some systems, these libraries aren't
+     installed correctly and will cause linker errors if used.
+   - Fixed assign_border_pixels(img, rect) so that it correctly zeros an image
+     when an empty rectangle is supplied. Previously, it did nothing to the
+     image in this case.
+   - Fixed compute_lda_transform() so it works properly when the class
+     covariance matrices are singular even after performing PCA.
+   - Fixed a bug in find_similarity_transform(). When given just two points as
+     inputs it would sometimes produce a reflection rather than a similarity
+     transform.
+   - Disabled all bindings to FFTW because FFTW isn't threadsafe.
+
+Other:
+   - Added an example program for dlib's SQLite API and made a few minor
+     usability improvements to the API as well.
+
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.12</h1><u>Release date</u>: Dec 20, 2014<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Upgraded fft() and ifft() to support 2D matrices.
+   - Added hough_transform
+   - Added skeleton() for finding the skeletonization of a binary image.
+   - Added distance_to_line(), clip_line_to_rectangle(), min_point(), and max_point().
+   - Added a simple API for calling C++ from MATLAB.
+
+Non-Backwards Compatible Changes:
+
+Bug fixes:
+   - Fixed a compile time error that could happen when calling fft() for
+     certain input types.
+   - Fixed a compile time error that prevented auto_threshold_image() from
+     being used.
+   - Fixed name clashes with new version of Boost. 
+   - Changed Python pickling code so it works with Python 3.
+   - Fixed CMake compile time error related to finding fftw.
+
+Other:
+   - Made extract_image_chips() much faster when extracting unscaled image chips.
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.11</h1><u>Release date</u>: Nov 13, 2014<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Added save_jpeg()
+   - Added the option to use an identity matrix prior to vector_normalizer_frobmetric.
+   - Made the extract_image_chips() routine more flexible, in particular: Added
+     get_mapping_to_chip(), get_face_chip_details(), map_det_to_chip(), and also
+     upgraded chip_details so you can specify a chip extraction by a bunch of
+     point correspondences between the chip and the original image.
+   - Added a set of local-binary-pattern based feature extractors:
+     make_uniform_lbp_image(), extract_histogram_descriptors(),
+     extract_uniform_lbp_descriptors(), and extract_highdim_face_lbp_descriptors() 
+   - Added compute_lda_transform() 
+   - Added equal_error_rate()
+   - Added cast_to() to the type_safe_union. This allows you to get the
+     contents of a const type_safe_union.
+
+Non-Backwards Compatible Changes:
+
+Bug fixes:
+   - Changed noncopyable.h to avoid a name clash with boost 1.56
+   - On some platforms hostname_to_ip() would erroneously return 0.0.0.0. This
+     has been fixed.
+
+Other:
+</pre></td></tr></table><hr><h1 style="margin:0px;">Release 18.10</h1><u>Release date</u>: Aug 28, 2014<br><u>Major Changes in this Release</u>:
+            <table cellspacing="5" cellpadding="0" width="100%"><tr><td width="15"></td><td><pre>
+New Features:
+   - Added find_similarity_transform()
+   - Added the ability to upgrade a auto_mutex_readonly from a readonly lock to a write
+     lock. 
+   - Added an implementation of the paper "One Millisecond Face Alignment with an Ensemble
+     of Regression Trees" by Vahid Kazemi and Josephine Sullivan which appeared in this
+     year's CVPR conference.  Therefore, dlib now includes tools for learning shape models
+     and also comes with a state-of-the-art face landmark locator.  See the
+     face_landmark_detection_ex.cpp and train_shape_predictor_ex.cpp example programs for
+     an introduction.
+
+Non-Backwards Compatible Changes:
+   - Made the interface to all the image processing routines more generic.  In particular, 
+     it is now easier to use arbitrary image types with dlib.  The new generic image
+     interface is defined in dlib/image_processing/generic_image.h and simply consists of
+     seven user defined global functions and a traits template.  Any user code that was
+     using array2d objects to represent images will still work.  However, if you had been
+     using your own custom image object you will need to provide implementations of the
+     seven functions.  Instructions for how to do this are in
+     dlib/image_processing/generic_image.h.
+
+Bug fixes:
+   - Changed the murmur hash implementation to avoid any possibility of strict aliasing
+     violations in user code, even when things get inlined in unfavorable ways.
+   - Fixed a color space handling bug in resize_image() that caused bad looking outputs in
+     some cases.
+   - If "cmake" was a substring of the full path to your source code folder then the cmake
+     scripts would fail. This has been fixed.
+   - Fixed a compile time error that could occur when using find_max_single_variable().
+
+Other:
+   - load_image() now uses the internal file header information to detect the
+     image format rather than looking at the file extension.
+   - Renamed unit test program to dtest avoid warnings from CMake.
+   - cross_validate_trainer() and cross_validate_trainer_threaded() no loner make copies
+     of the training data.  This significantly reduces their RAM usage for large datasets.
+   - Changed the serialization code for C-strings so that they don't save the null
+     terminator byte. This makes their serialization format the same as the format for
+     std::string.  The code should still be able to read all previously serialized data
+     correctly, so the change is backwards compatible with previous versions of dlib. 
+   - Changed the evaluate_detectors() routine so that it applies non-max suppression to
+     each detector individually. This way one detector doesn't stomp on the output of
+     another detector.
+   - Made the version of draw_line() that draws onto a regular image use alpha blending
+     for drawing diagonal lines.
+</pre></td></tr></table><br><br><br><center><a href="old_release_notes.html">Old Release Notes</a></center><br></div></div></div><div id="bottom_content"></div></body></html>

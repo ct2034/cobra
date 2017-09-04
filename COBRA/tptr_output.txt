@@ -1,0 +1,5 @@
+analysis0.task 242 2317 0.202479
+analysis0.task 223 1456 5.16592
+analysis0.task 223 1456 5.2287
+D:\COBRA\KIVA\kiva-10-500-1.task 1166 162913 0.274443
+D:\COBRA\KIVA\kiva-10-500-1.task 1166 162913 0.259863
