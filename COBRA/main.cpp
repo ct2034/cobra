@@ -1,6 +1,6 @@
 #include "Simulation.h"
 
-void main(int argc, char** argv)
+int main(int argc, char** argv)
 {
 	Simulation simu1(argv[1], argv[2]);
 	simu1.run_TOTP();	
@@ -17,5 +17,6 @@ void main(int argc, char** argv)
 
 	simu1.ShowTask();
 	simu2.ShowTask();
-	return;
+    return 0;
 }
+	
