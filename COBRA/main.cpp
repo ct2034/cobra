@@ -11,9 +11,7 @@ int main(int argc, char** argv)
 	simu2.run_TPTR();
 	simu2.SaveThroughput((string)argv[2] + "_tptr");
 	simu2.SaveTask("tptr_output.txt", argv[2]);
-	//simu2.SavePath("20analysis1_5.path");
-	//simu2.SaveTask("20analysis1_5.tsk");
-
+    simu2.SavePath("tptr_out.path");
 
 	simu1.ShowTask();
 	simu2.ShowTask();

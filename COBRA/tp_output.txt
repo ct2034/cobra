@@ -9,3 +9,4 @@ example10.task 213 6663 3724.48
 example10.task 213 6663 3714.82
 example10.task 213 6663 3803
 example10.task 213 6663 4575.59
+example10.task 213 6663 3908.38
