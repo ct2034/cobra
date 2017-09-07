@@ -73,6 +73,7 @@ void Simulation::LoadMap(string fname)
 			if (line[j - 1] == 'e') //endpoint
 			{
 				endpoints[ep++].loc = i*col + j;
+                cout << "E[" << i << "," << j << "] ";
 			}
 			else if (line[j - 1] == 'r') //robot initial location, also regarded as home endpoint
 			{
@@ -149,7 +150,7 @@ void Simulation::LoadTask(string fname)
 		getline(myfile, line);
 		ss.clear();
 		ss << line;
-		ss >> t_task >> s >> g >> ts >> tg; //time +s tart + goal + time at start + time at goal
+        ss >> t_task >> s >> g >> ts >> tg; //time + start + goal + time at start + time at goal
 		tasks[t_task].push_back(Task(&endpoints[s], &endpoints[g], ts, tg));
 	}
 	myfile.close();
