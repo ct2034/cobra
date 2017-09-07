@@ -73,7 +73,7 @@ void Simulation::LoadMap(string fname)
 			if (line[j - 1] == 'e') //endpoint
 			{
 				endpoints[ep++].loc = i*col + j;
-                cout << "E[" << i << "," << j << "] ";
+                cout << "E[" << j << "," << i << "] ";
 			}
 			else if (line[j - 1] == 'r') //robot initial location, also regarded as home endpoint
 			{
@@ -233,8 +233,8 @@ void Simulation::run_TOTP()
 		clock_t start = std::clock();
 		if (!ag->TOTP(token))//not get a task
 		{
+            cerr << "Not get a task." << endl;
 			system("PAUSE");
-
 		}
 		computation_time += std::clock() - start;
 		/*if (!TestConstraints())
@@ -304,6 +304,7 @@ void Simulation::run_TPTR()
 		clock_t start = std::clock();
 		if (!ag->TPTR(token))//not get a task
 		{
+            cerr << "Not get a task." << endl;
 			system("PAUSE");
 
 		}
