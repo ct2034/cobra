@@ -1,5 +1,7 @@
 all: main.cpp Agent.cpp Endpoint.cpp Graph.cpp Node.cpp Simulation.cpp
-	gcc -o cobra \
+	gcc \
+	--std=c++0x \
+	-o cobra \
 	main.cpp \
 	Agent.cpp Endpoint.cpp Graph.cpp \
 	Node.cpp Simulation.cpp \
