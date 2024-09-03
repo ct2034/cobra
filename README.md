@@ -1,6 +1,6 @@
 This code is authored by Hang Ma
 
-To find out more please refer to their publication: [Lifelong Multi-Agent Path Finding for Online Pickup and Delivery Tasks](http://www-scf.usc.edu/~hangma/pub/aamas17.pdf)
+To find out more please refer to their publication: [Lifelong Multi-Agent Path Finding for Online Pickup and Delivery Tasks](https://arxiv.org/abs/1705.10868)
 
 ```
 @article{Ma2017,
